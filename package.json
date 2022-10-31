@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Th3R3ality/wise-mystical-tree.git"
+    "url": "git+https://github.com/Th3R3ality/wise-mystical-bot.git"
   },
   "author": "Th3R3ality",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Th3R3ality/wise-mystical-tree/issues"
+    "url": "https://github.com/Th3R3ality/wise-mystical-bot/issues"
   },
-  "homepage": "https://github.com/Th3R3ality/wise-mystical-tree#readme"
+  "homepage": "https://github.com/Th3R3ality/wise-mystical-bot#readme"
 }
