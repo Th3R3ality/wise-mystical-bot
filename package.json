@@ -1,0 +1,19 @@
+{
+  "name": "wise-mystical-bot",
+  "version": "1.0.0",
+  "description": "a wise and mystical discord bot",
+  "main": "wise mystical tree.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Th3R3ality/wise-mystical-tree.git"
+  },
+  "author": "Th3R3ality",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Th3R3ality/wise-mystical-tree/issues"
+  },
+  "homepage": "https://github.com/Th3R3ality/wise-mystical-tree#readme"
+}
