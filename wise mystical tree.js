@@ -7,6 +7,21 @@ const { token, guildid, channelid, botid } = require("./config.json");
 var channel = null;
 var guild = null;
 
+const wise_client = new net.Socket();
+wise_client.connect(1337, 'localhost', function() {
+	console.log('Connected');
+	wise_client.write('Hello, server! Love, wise_client.\n');
+});
+
+wise_client.on('data', function(data) {
+	console.log('Received: ' + data);
+	wise_client.destroy(); // kill wise_client after server's response
+});
+
+wise_client.on('close', function() {
+	console.log('Connection closed');
+});
+
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds,
@@ -15,10 +30,8 @@ const client = new Client({
 });
 
 client.commands = new Collection();
-
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);
 	const command = require(filePath);
@@ -30,23 +43,8 @@ for (const file of commandFiles) {
 	}
 }
 
-
 client.once(Events.ClientReady, c => {
 	console.log(`Ready! Logged in as ${c.user.tag}`);
-});
-
-/*
-client.on("messageCreate", (message) => {
-    if (message.author.id != botid){
-        message.channel.send("faded than a ho");
-        if (channel){
-            channel.send("yodie gang");
-        }
-    }
-});
-*/
-
-client.on('ready', () => {
     client.channels.fetch(channelid).then(c => channel = c);
     client.guilds.fetch(guildid).then(g => guild = g);
 
@@ -57,6 +55,12 @@ client.on('ready', () => {
 });
 client.login(token);
 
+const wise_server = net.createServer();
+wise_server.on("connection", handleConnection);
+wise_server.listen(6969, function() {
+    console.log("server listening to", wise_server.address());
+});
+
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
     console.log(interaction);
@@ -66,17 +70,16 @@ client.on(Events.InteractionCreate, async interaction => {
         return;
     }
     try {
+        if (interaction.commandName == "send"){
+            let message = interaction.options.getString("message");
+            wise_client.write(interaction.user.tag + ":" + message + "\n");
+            console.log(`sent: ${message}`);
+        }
         await command.execute(interaction);
     } catch (e) {
         console.error(e);
         await interaction.reply({content: "There was an error while executing this command!", ephemeral: true});
     }
-});
-
-const server = net.createServer();
-server.on("connection", handleConnection);
-server.listen(6969, function() {
-    console.log("server listening to", server.address());
 });
 
 function handleConnection(conn){
@@ -90,8 +93,10 @@ function handleConnection(conn){
     conn.on("error", onConnError);
 
     function onConnData(d){
+        
         console.log("connection data from: ", remoteAddress, " : ", d, d.length);
-        if (d[0] != "\\"){
+
+        if (d[0] != "\\") {
             str = "**" + d.slice(0, d.indexOf(':')) + "**:" + d.slice(d.indexOf(':') + 1);
             channel.send(str);
         }
@@ -109,7 +114,7 @@ function handleConnection(conn){
                 };}
             client.user.setPresence(pres);
         }
-        conn.write(d);
+        //conn.write(d);
     }
 
     function onConnClose(){
@@ -120,3 +125,15 @@ function handleConnection(conn){
         console.log("connection ", remoteAddress, " error: ", err.message);
     }
 }
+
+/*
+client.on("messageCreate", (message) => {
+    if (message.author.id != botid){
+        message.channel.send("faded than a ho");
+        if (channel){
+            channel.send("yodie gang");
+        }
+    }
+});
+*/
+
