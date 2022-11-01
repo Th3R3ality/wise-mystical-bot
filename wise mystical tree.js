@@ -2,8 +2,7 @@ const net = require("net");
 const fs = require("node:fs");
 const path = require("node:path");
 const { Client, Events, GatewayIntentBits, ActivityType, ApplicationCommandOptionType, Collection } = require('discord.js');
-const { token } = require("./token.json");
-const { guildid, channelid, botid } = require("./config.json");
+const { token, guildid, channelid, botid } = require("./config.json");
 
 var channel = null;
 var guild = null;
@@ -61,14 +60,11 @@ client.login(token);
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
     console.log(interaction);
-
     const command = interaction.client.commands.get(interaction.commandName);
-
     if (!command) {
         console.error(`no command matching ${interaction.commandName} was found.`);
         return;
     }
-
     try {
         await command.execute(interaction);
     } catch (e) {

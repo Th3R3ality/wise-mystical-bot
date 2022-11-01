@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, CommandInteractionOptionResolver } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -11,6 +11,7 @@ module.exports = {
                 .setRequired(true)),
     
     async execute(interaction) {
-        await interaction.reply({ content: "sent nothing because command functionality hasn't been implemented yet :)", ephemeral: true });
+        const message = interaction.options.getString("message");
+        await interaction.reply({ content: `sent message: ${message}`, ephemeral: true });
     },
 };

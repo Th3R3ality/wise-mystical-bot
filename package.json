@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/Th3R3ality/wise-mystical-bot/issues"
   },
-  "homepage": "https://github.com/Th3R3ality/wise-mystical-bot#readme"
+  "homepage": "https://github.com/Th3R3ality/wise-mystical-bot#readme",
+  "dependencies": {
+    "discord.js": "^14.6.0",
+    "net": "^1.0.2"
+  }
 }
