@@ -6,6 +6,7 @@ const { token, guildid, channelid, botid } = require("./config.json");
 
 var channel = null;
 var guild = null;
+var reopen = false;
 
 const wise_client = new net.Socket();
 const wise_server = net.createServer();
@@ -31,7 +32,7 @@ for (const file of commandFiles) {
 	}
 }
 
-//initialize client
+//initialize discord client
 client.once(Events.ClientReady, c => {
 	console.log(`Ready! Logged in as ${c.user.tag}`);
     client.channels.fetch(channelid).then(c => channel = c);
@@ -69,30 +70,24 @@ client.on(Events.InteractionCreate, async interaction => {
 
 //server initialization and handling
 wise_server.on("connection", handleConnection);
-wise_server.listen(6969, function() {
-    console.log("server listening to", wise_server.address());
+wise_server.listen(6969, () => {
+    console.log(`wise_server: server listening to: ${wise_server.address()}`);
 });
-function handleConnection(conn){
-    var remoteAddress = conn.remoteAddress + ":" + conn.remotePort;
-    console.log("new client connection from ", remoteAddress);
+function handleConnection(connection){
+    var remoteAddress = connection.remoteAddress + ":" + connection.remotePort;
+    console.log(`wise_server: new client connection from: ${remoteAddress}`);
 
-    conn.setEncoding('utf8');
-
-    conn.on("data", onConnData);
-    conn.once("close", onConnClose);
-    conn.on("error", onConnError);
-
-    function onConnData(d){
+    connection.on("data", data => {
         
-        console.log("connection data from: ", remoteAddress, " : ", d, d.length);
+        console.log(`wise_server: recieved data from: ${remoteAddress} => ${data}`);
 
-        if (d[0] != "\\") {
-            str = "**" + d.slice(0, d.indexOf(':')) + "**:" + d.slice(d.indexOf(':') + 1);
+        if (data[0] != "\\") {
+            str = "**" + data.slice(0, data.indexOf(':')) + "**:" + data.slice(data.indexOf(':') + 1);
             channel.send(str);
         }
         else {
-            str = parseInt(d.slice(1, d.length));
-            pres = {}
+            str = parseInt(data.slice(data.indexOf("\\"), data.length));
+            let pres = {}
             if (str == 0){
                 pres = {
                     activities: [{name: "the bits and the bytes", type: ActivityType.Watching}],
@@ -104,25 +99,33 @@ function handleConnection(conn){
                 };}
             client.user.setPresence(pres);
         }
-        //conn.write(d);
-    }
+    });
 
-    function onConnClose(){
-        console.log("connection from ", remoteAddress, " closed");
-    }
-
-    function onConnError(err){
-        console.log("connection ", remoteAddress, " error: ", err.message);
-    }
+    connection.once("close", () => {
+        console.log("wise_server: connection from ", remoteAddress, " closed");
+    });
+    
+    connection.on("error", err => {
+        console.log("wise_server: connection ", remoteAddress, " error: ", err.message);
+    });
 }
 
+
+
+
 //client handling
-wise_client.on('data', function(data) {
-	console.log('Received: ' + data);
-	wise_client.destroy(); // kill wise_client after server's response
+wise_client.on('data', data => {
+	console.log(`wise_client: recieved "${data}"`);
+    wise_client.destroy(); // kill wise_client after server's response
 });
-wise_client.on('close', function() {
-	console.log('Connection closed');
+
+wise_client.on('error', e => {
+    console.log(`wise_client: error: ${e.code}\n`);
+    process.exit(1);
+});
+
+wise_client.on('close', () => {
+	console.log('wise_client: closing');
 });
 
 /*
