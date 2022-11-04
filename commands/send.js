@@ -1,5 +1,4 @@
 const { SlashCommandBuilder, CommandInteractionOptionResolver } = require("discord.js");
-const { Socket } = require("net");
 
 module.exports = {
     data: new SlashCommandBuilder()

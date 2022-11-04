@@ -56,7 +56,7 @@ client.on(Events.InteractionCreate, async interaction => {
     }
     if (!wise_client){
         console.error(`wise_client not connected`);
-        await interaction.reply({content: "There was an error while executing this command!", ephemeral: true});
+        await interaction.reply({content: "couldn't execute command, not connected to minecraft", ephemeral: true});
         return;
     }
 
@@ -68,10 +68,10 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 });
 
-//server initialization and handling
+//server socket initialization and handling
 wise_server.on("connection", handleConnection);
 wise_server.listen(6969, () => {
-    console.log(`wise_server: server listening to: ${wise_server.address()}`);
+    console.log(`wise_server: server listening to: `, wise_server.address());
 });
 function handleConnection(connection){
     var remoteAddress = connection.remoteAddress + ":" + connection.remotePort;
@@ -113,7 +113,7 @@ function handleConnection(connection){
 
 
 
-//client handling
+//client socket handling
 wise_client.on('data', data => {
 	console.log(`wise_client: recieved "${data}"`);
     wise_client.destroy(); // kill wise_client after server's response
