@@ -1,7 +1,7 @@
 var frames = document.getElementsByTagName("iframe");
-///
-///frames[0].parentNode.parentNode.parentNode.remove();
-///
+frames[0].remove();
+//frames[0].parentNode.parentNode.parentNode.remove();
+
 setTimeout(alert,100, "O_o");
 
 Array.from(document.getElementsByTagName('*')).forEach(element => {
