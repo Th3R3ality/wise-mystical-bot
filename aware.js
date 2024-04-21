@@ -4,7 +4,7 @@ setTimeout(alert,100, "O_o");
 
 window.removeAllEventListeners = () => {
     Array.from(document.querySelectorAll('*')).forEach(element => {
-        const listeners = getEventListeners(element);
+        const listeners = element.getEventListeners();
         Object.keys(listeners).forEach(eventType => {
             listeners[eventType].forEach(({ listener, options }) => {
                 element.removeEventListener(eventType, listener, options || false);
